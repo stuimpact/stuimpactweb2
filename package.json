@@ -11,10 +11,13 @@
   "dependencies": {
     "auth": "^1.1.1",
     "axios": "^1.7.7",
+    "bcrypt": "^5.1.1",
     "cheerio": "^1.0.0",
     "firebase": "^10.13.2",
     "lucide-react": "^0.441.0",
+    "mongodb": "^6.9.0",
     "next": "14.2.11",
+    "nodemailer": "^6.9.15",
     "playwright": "^1.47.1",
     "puppeteer": "^23.3.1",
     "react": "^18",

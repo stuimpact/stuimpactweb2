@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { MapPin, X } from 'lucide-react';
+import Link from "next/link";
 
 interface Job {
     title: string;
@@ -22,7 +23,6 @@ export default function OpportunityFinder() {
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
 
-    // Function to clear previous jobs if a new search is detected
     const clearJobsIfNewSearch = () => {
         const prevSearchParams = localStorage.getItem('searchParams');
         const currentSearchParams = JSON.stringify({
@@ -32,21 +32,19 @@ export default function OpportunityFinder() {
             location,
         });
 
-        // If the current search parameters are different from the last search, clear the jobs
         if (prevSearchParams !== currentSearchParams) {
             setJobs([]);
             setCurrentPage(1);
             setHasMore(true);
-            localStorage.removeItem('jobs');  // Clear saved jobs
+            localStorage.removeItem('jobs');
         }
 
-        // Save the new search parameters
         localStorage.setItem('searchParams', currentSearchParams);
     };
 
     const fetchJobs = async (page: number) => {
         setLoading(true);
-        clearJobsIfNewSearch();  // Clear jobs if a new search is being made
+        clearJobsIfNewSearch();
 
         try {
             const response = await axios.post('/api/searchjobs', {
@@ -63,7 +61,7 @@ export default function OpportunityFinder() {
                 setJobs(newJobs);
                 setHasMore(nextPage !== null);
                 setCurrentPage(page);
-                localStorage.setItem('jobs', JSON.stringify(newJobs));  // Save to local storage
+                localStorage.setItem('jobs', JSON.stringify(newJobs));
             } else {
                 console.error('Expected an array of articles but got:', articles);
             }
@@ -75,7 +73,6 @@ export default function OpportunityFinder() {
     };
 
     useEffect(() => {
-        // Load jobs from localStorage if they exist on initial mount
         const storedJobs = localStorage.getItem('jobs');
         const storedSearchParams = localStorage.getItem('searchParams');
         if (storedJobs && storedSearchParams) {
@@ -142,26 +139,35 @@ export default function OpportunityFinder() {
         };
     }, []);
 
-
-return (
-        <div className="min-h-screen bg-[#1c1c2e] text-white">
-            <header className="flex justify-between items-center p-4">
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-black to-purple-800 relative overflow-hidden text-white">
+            <div className="absolute inset-0 bg-opacity-25">
+                <div className="absolute top-0 left-0 w-full h-full">
+                    {/* Add your glowing orbs here */}
+                    <div className="glowing-orb orb1"></div>
+                    <div className="glowing-orb orb2"></div>
+                    <div className="glowing-orb orb3"></div>
+                    {/* Add more orbs as needed */}
+                </div>
+            </div>
+            <header className="flex justify-between items-center p-4 relative z-10">
                 <div className="flex items-center space-x-2">
                     <img src="/StuImpact.png?height=32&width=32" alt="STUimpact Logo" className="h-8 w-8" />
                     <span className="text-xl font-bold">STUimpact</span>
                 </div>
                 <nav className="flex items-center space-x-4">
-                    <a href="#" className="text-gray-300 hover:text-white">About</a>
-                    <a href="#" className="text-gray-300 hover:text-white">FAQs</a>
-                    <a href="#" className="text-gray-300 hover:text-white">Contact Us</a>
-                    <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-orange-500 rounded-md text-white" onClick={() => fetchJobs(1)}>
-                        Find Opportunities
-                    </button>
-                    <img src="../guy.PNG?height=32&width=32" alt="User Avatar" className="h-8 w-8 rounded-full" />
+                    <a href="/" className="text-gray-300 hover:text-white">Home</a>
+                    <a href="/nonprofits" className="text-gray-300 hover:text-white">Nonprofits</a>
+                    <a href="/contact" className="text-gray-300 hover:text-white">Contact</a>
+                    <Link href="/opportunities">
+                        <button className="bg-gradient-to-r from-pink-500 to-orange-500 rounded-full px-4 py-2 text-white transition duration-300 hover:scale-105">
+                            Find Opportunities
+                        </button>
+                    </Link>
                 </nav>
             </header>
 
-            <main className="p-8">
+            <main className="p-8 relative z-10">
                 <h1 className="text-4xl font-bold mb-6">Opportunity Finder</h1>
 
                 <div className="bg-[#2a2a3d] p-2 rounded-full mb-8 flex flex-wrap items-center space-x-2">
@@ -287,7 +293,7 @@ return (
                             className="absolute top-2 right-2 text-gray-400 hover:text-white"
                             onClick={closeOverlay}
                         >
-                        <X className="h-6 w-6" />
+                            <X className="h-6 w-6" />
                         </button>
                         <h2 className="text-2xl font-semibold mb-4">{selectedJob.title}</h2>
                         <p className="text-gray-400 mb-2">Description:</p>

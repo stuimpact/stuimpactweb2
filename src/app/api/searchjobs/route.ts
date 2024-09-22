@@ -47,8 +47,6 @@ export async function POST(req: Request) {
             case 5:
                 url += '&program-type=gap';
                 break;
-            default:
-                url += `&page=${page}`; // Default for the first page or other authpage
         }
 
         // Scrape the data
@@ -57,7 +55,7 @@ export async function POST(req: Request) {
             const pageInstance = await browser.newPage();
 
             // Set a timeout for page navigation
-            await pageInstance.goto(url, { timeout: 15000 }); // 15 seconds timeout
+            await pageInstance.goto(url, { timeout: 2000 }); // 15 seconds timeout
 
             // Scrape the information from the articles
             const articles = await pageInstance.$$eval('article', elements =>
