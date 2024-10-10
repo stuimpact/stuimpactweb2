@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
-import { chromium } from 'playwright';
+import { MongoClient } from 'mongodb';
+
+// MongoDB connection details (hardcoded for testing)
+const uri = 'mongodb+srv://mrithunjay26:77820897@comments.jx9xmpc.mongodb.net/'; // Replace with your MongoDB connection string
 
 // Handle POST requests
 export async function POST(req: Request) {
+    const client = new MongoClient(uri);
+
     try {
         const body = await req.json();
         let { interest, grade, page = 1 } = body; // Default to page 1 if not provided
@@ -11,78 +16,55 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Interest and grade are required.' }, { status: 400 });
         }
 
-        // Convert 'Freshman' to grade '9' if necessary
-        const gradeMap = {
-            'freshman': '9',
-            'sophomore': '10',
-            'junior': '11',
-            'senior': '12',
+        // Convert grades to uppercase word form if necessary
+        const gradeMap: { [key: string]: string } = {
+            '9': 'FRESHMEN',
+            '10': 'SOPHOMORES',
+            '11': 'JUNIORS',
+            '12': 'SENIORS',
         };
-        grade = gradeMap[grade.toLowerCase()] || grade;
+        grade = gradeMap[grade] || grade.toUpperCase();
 
-        // Supported interests and grades
+        // Supported interests (uppercase as required in the tags)
         const interests = [
-            'Science', 'Arts', 'Education', 'Engineering', 'Medicine',
-            'Computer Science', 'Business', 'Writing', 'Government', 'Law/Advocacy'
+            'BIOLOGY', 'COMPUTER SCIENCE', 'ENVIRONMENTAL SCIENCE', 'ENGINEERING', 'MEDICAL',
+            'CHEMISTRY', 'ARTS PERFORMANCE', 'MATHEMATICS', 'ENGLISH LITERATURE WRITING', 'GENERAL',
+            'PUBLIC ADMINISTRATION', 'DATA SCIENCE', 'POLITICAL SCIENCE', 'LAW', 'PHYSICS',
+            'BUSINESS', 'PSYCHOLOGY', 'KINESIOLOGY', 'PHILOSOPHY'
         ];
-        const grades = ['9', '10', '11', '12'];
 
         // Validate interest and grade
-        if (!interests.includes(interest) || !grades.includes(grade)) {
+        if (!interests.includes(interest.toUpperCase()) || !Object.values(gradeMap).includes(grade)) {
             return NextResponse.json({ error: 'Invalid interest or grade.' }, { status: 400 });
         }
 
-        // Determine the URL based on the page number
-        let url = `https://www.teenlife.com/global-search-page/?keyword=${encodeURIComponent(interest)}`;
-        switch (page) {
-            case 2:
-                url += '&program-type=summer';
-                break;
-            case 3:
-                url += '&program-type=enrichment';
-                break;
-            case 4:
-                url += '&program-type=volunteer';
-                break;
-            case 5:
-                url += '&program-type=gap';
-                break;
-        }
+        // Connect to MongoDB
+        await client.connect();
+        const db = client.db('extracurriculars'); // Replace with your database name
+        const collection = db.collection('programs'); // Replace with your collection name
 
-        // Scrape the data
-        try {
-            const browser = await chromium.launch();
-            const pageInstance = await browser.newPage();
+        // Build the query based on interest and grade
+        const query = {
+            $and: [
+                { tags: interest.toUpperCase() },
+                { tags: grade.toUpperCase() }
+            ]
+        };
 
-            // Set a timeout for page navigation
-            await pageInstance.goto(url, { timeout: 2000 }); // 15 seconds timeout
+        // Fetch the matching documents (pagination applied)
+        const opportunities = await collection
+            .find(query)
+            .skip((page - 1) * 10)
+            .limit(10)
+            .toArray();
 
-            // Scrape the information from the articles
-            const articles = await pageInstance.$$eval('article', elements =>
-                elements.map(article => {
-                    const title = article.querySelector('.program-heading a')?.textContent || '';
-                    const description = article.querySelector('.description')?.textContent || '';
-                    const url = article.querySelector('.program-heading a')?.getAttribute('href') || '';
-                    const imgSrc = article.querySelector('img')?.getAttribute('src') || '';
-
-                    return {
-                        title,
-                        description,
-                        url,
-                        imgSrc,
-                    };
-                })
-            );
-
-            // Close the browser and return the scraped data
-            await browser.close();
-            return NextResponse.json({ articles }, { status: 200 });
-        } catch (error) {
-            console.error('Error scraping data:', error);
-            return NextResponse.json({ error: 'Failed to scrape data.' }, { status: 500 });
-        }
+        // Return the opportunities found
+        return NextResponse.json({ opportunities }, { status: 200 });
     } catch (error) {
         console.error('Error handling request:', error);
         return NextResponse.json({ error: 'Invalid request.' }, { status: 400 });
+    } finally {
+        // Close the client connection
+        await client.close();
     }
 }

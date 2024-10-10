@@ -2,33 +2,49 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { MapPin, X } from 'lucide-react';
+import { X, Search, Menu, ChevronRight } from 'lucide-react'; // Import ChevronRight here
 import Link from "next/link";
 
 interface Job {
+    _id: string;
     title: string;
     description: string;
     url: string;
-    imgSrc: string;
 }
 
+const Button = ({ children, className, ...props }) => (
+    <button
+        className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
+        {...props}
+    >
+        {children}
+    </button>
+)
+
+const Input = ({ className, ...props }) => (
+    <input
+        className={`px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...props}
+    />
+)
+
 export default function OpportunityFinder() {
-    const [location, setLocation] = useState<string>('United States');
+    const [location, setLocation] = useState<string>('Washington');
     const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
     const [selectedGrades, setSelectedGrades] = useState<string[]>([]);
-    const [selectedModes, setSelectedModes] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [jobs, setJobs] = useState<Job[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+    const [menuOpen, setMenuOpen] = useState<boolean>(false);
+    const [filtersOpen, setFiltersOpen] = useState<boolean>(false);
 
     const clearJobsIfNewSearch = () => {
         const prevSearchParams = localStorage.getItem('searchParams');
         const currentSearchParams = JSON.stringify({
             interest: selectedSubjects.join(' '),
             grade: selectedGrades.join(','),
-            mode: selectedModes.join(','),
             location,
         });
 
@@ -50,20 +66,19 @@ export default function OpportunityFinder() {
             const response = await axios.post('/api/searchjobs', {
                 interest: selectedSubjects.join(' '),
                 grade: selectedGrades.join(','),
-                mode: selectedModes.join(','),
                 location: location,
                 page: page,
             });
 
-            const { articles, nextPage } = response.data;
-            if (articles && Array.isArray(articles)) {
-                const newJobs = [...jobs, ...articles];
+            const { opportunities } = response.data;
+            if (opportunities && Array.isArray(opportunities)) {
+                const newJobs = [...jobs, ...opportunities];
                 setJobs(newJobs);
-                setHasMore(nextPage !== null);
+                setHasMore(opportunities.length > 0);
                 setCurrentPage(page);
                 localStorage.setItem('jobs', JSON.stringify(newJobs));
             } else {
-                console.error('Expected an array of articles but got:', articles);
+                console.error('Expected an array of opportunities but got:', opportunities);
             }
         } catch (error) {
             console.error('Error fetching jobs:', error);
@@ -139,169 +154,155 @@ export default function OpportunityFinder() {
         };
     }, []);
 
+    const toggleMenu = () => setMenuOpen(!menuOpen);
+    const toggleFilters = () => setFiltersOpen(!filtersOpen);
     return (
-        <div className="min-h-screen bg-gradient-to-b from-black to-purple-800 relative overflow-hidden text-white">
-            <div className="absolute inset-0 bg-opacity-25">
-                <div className="absolute top-0 left-0 w-full h-full">
-                    {/* Add your glowing orbs here */}
-                    <div className="glowing-orb orb1"></div>
-                    <div className="glowing-orb orb2"></div>
-                    <div className="glowing-orb orb3"></div>
-                    {/* Add more orbs as needed */}
-                </div>
-            </div>
-            <header className="flex justify-between items-center p-4 relative z-10">
-                <div className="flex items-center space-x-2">
-                    <img src="/StuImpact.png?height=32&width=32" alt="STUimpact Logo" className="h-8 w-8" />
-                    <span className="text-xl font-bold">STUimpact</span>
-                </div>
-                <nav className="flex items-center space-x-4">
-                    <a href="/" className="text-gray-300 hover:text-white">Home</a>
-                    <a href="/nonprofits" className="text-gray-300 hover:text-white">Nonprofits</a>
-                    <a href="/contact" className="text-gray-300 hover:text-white">Contact</a>
-                    <Link href="/opportunities">
-                        <button className="bg-gradient-to-r from-pink-500 to-orange-500 rounded-full px-4 py-2 text-white transition duration-300 hover:scale-105">
-                            Find Opportunities
-                        </button>
+        <div className="min-h-screen bg-white text-gray-800 overflow-x-hidden">
+            <header className="sticky top-0 bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-sm z-50">
+                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+                    <Link href="/" className="text-2xl font-bold text-blue-600">
+                        <img src="/StuImpact.png?height=40&width=120" alt="StuImpact Logo" className="h-10" />
                     </Link>
-                </nav>
+                    <nav className="hidden md:flex space-x-6">
+                        <Link href="/" className="text-sm hover:text-blue-600 transition-colors">Home</Link>
+                        <Link href="/nonprofits" className="text-sm hover:text-blue-600 transition-colors">Nonprofits</Link>
+                        <Link href="/contact" className="text-sm hover:text-blue-600 transition-colors">Contact</Link>
+                    </nav>
+                    <div className="flex items-center space-x-4">
+                        <Link href="/opportunities">
+                            <Button className="bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all">
+                                Explore Opportunities
+                            </Button>
+                        </Link>
+                        <button onClick={toggleMenu} className="md:hidden text-gray-600 hover:text-blue-600 transition-colors">
+                            <Menu />
+                        </button>
+                    </div>
+                </div>
             </header>
 
-            <main className="p-8 relative z-10">
-                <h1 className="text-4xl font-bold mb-6">Opportunity Finder</h1>
+            <main className="container mx-auto px-4 py-8 relative z-10">
+                <h1 className="text-4xl font-bold mb-8 text-center">Opportunity Finder</h1>
 
-                <div className="bg-[#2a2a3d] p-2 rounded-full mb-8 flex flex-wrap items-center space-x-2">
-                    <div className="flex-1 min-w-[200px] flex items-center bg-[#1c1c2e] rounded-full p-2 m-1">
-                        <MapPin className="text-gray-400 mr-2 h-5 w-5" />
-                        <input
-                            placeholder="Location"
-                            className="bg-transparent border-none text-white placeholder-gray-400 flex-1 focus:outline-none"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                        />
-                    </div>
-                    <button
-                        className="bg-[#5b5bf7] rounded-full px-8 py-2 m-1 text-white"
+                <div className="bg-gray-100 p-4 rounded-lg mb-8">
+                    <Button
+                        className="w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
                         onClick={() => fetchJobs(1)}
                     >
+                        <Search className="mr-2 h-5 w-5" />
                         Search Jobs
-                    </button>
+                    </Button>
                 </div>
 
                 {loading && <div className="text-center">Loading jobs...</div>}
 
                 <div className="flex flex-col md:flex-row">
                     <aside className="w-full md:w-1/4 pr-0 md:pr-8 mb-8 md:mb-0">
-                        <h2 className="text-lg font-semibold mb-4">REFINE BY SUBJECT</h2>
-                        <div className="space-y-2">
-                            {['Arts', 'Business', 'Computer Science', 'Engineering', 'Medicine', 'Government', 'Law/Advocacy'].map((subject) => (
-                                <div key={subject} className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        id={subject}
-                                        className="mr-2"
-                                        checked={selectedSubjects.includes(subject)}
-                                        onChange={() => {
-                                            setSelectedSubjects(prev =>
-                                                prev.includes(subject)
-                                                    ? prev.filter(s => s !== subject)
-                                                    : [...prev, subject]
-                                            );
-                                        }}
-                                    />
-                                    <label htmlFor={subject} className="text-sm font-medium leading-none cursor-pointer">
-                                        {subject}
-                                    </label>
-                                </div>
-                            ))}
+                        <div className="md:hidden mb-4">
+                            <Button
+                                className="w-full bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                onClick={toggleFilters}
+                            >
+                                {filtersOpen ? 'Hide Filters' : 'Show Filters'}
+                            </Button>
                         </div>
-                        <h2 className="text-lg font-semibold mt-8 mb-4">GRADE LEVEL</h2>
-                        <div className="space-y-2">
-                            {['Freshman', 'Sophomore', 'Junior', 'Senior'].map((grade) => (
-                                <div key={grade} className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        id={grade}
-                                        className="mr-2"
-                                        checked={selectedGrades.includes(grade)}
-                                        onChange={() => {
-                                            setSelectedGrades(prev =>
-                                                prev.includes(grade)
-                                                    ? prev.filter(g => g !== grade)
-                                                    : [...prev, grade]
-                                            );
-                                        }}
-                                    />
-                                    <label htmlFor={grade} className="text-sm font-medium leading-none cursor-pointer">
-                                        {grade}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                        <h2 className="text-lg font-semibold mt-8 mb-4">JOB MODE</h2>
-                        <div className="space-y-2">
-                            {['Remote', 'On site', 'Hybrid'].map((mode) => (
-                                <div key={mode} className="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        id={mode}
-                                        className="mr-2"
-                                        checked={selectedModes.includes(mode)}
-                                        onChange={() => {
-                                            setSelectedModes(prev =>
-                                                prev.includes(mode)
-                                                    ? prev.filter(m => m !== mode)
-                                                    : [...prev, mode]
-                                            );
-                                        }}
-                                    />
-                                    <label htmlFor={mode} className="text-sm font-medium leading-none cursor-pointer">
-                                        {mode}
-                                    </label>
-                                </div>
-                            ))}
+                        <div className={`md:block ${filtersOpen ? 'block' : 'hidden'}`}>
+                            <h2 className="text-lg font-semibold mb-4">Refine by Subject</h2>
+                            <div className="space-y-2">
+                                {['Arts', 'Business', 'Computer Science', 'Engineering', 'Medicine', 'Government', 'Law/Advocacy'].map((subject) => (
+                                    <div key={subject} className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id={subject}
+                                            className="mr-2"
+                                            checked={selectedSubjects.includes(subject)}
+                                            onChange={() => {
+                                                setSelectedSubjects(prev =>
+                                                    prev.includes(subject)
+                                                        ? prev.filter(s => s !== subject)
+                                                        : [...prev, subject]
+                                                );
+                                            }}
+                                        />
+                                        <label htmlFor={subject} className="text-sm font-medium leading-none cursor-pointer">
+                                            {subject}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            <h2 className="text-lg font-semibold mt-8 mb-4">Grade Level</h2>
+                            <div className="space-y-2">
+                                {['FRESHMEN', 'SOPHOMORES', 'JUNIORS', 'SENIORS'].map((grade) => (
+                                    <div key={grade} className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            id={grade}
+                                            className="mr-2"
+                                            checked={selectedGrades.includes(grade)}
+                                            onChange={() => {
+                                                setSelectedGrades(prev =>
+                                                    prev.includes(grade)
+                                                        ? prev.filter(g => g !== grade)
+                                                        : [...prev, grade]
+                                                );
+                                            }}
+                                        />
+                                        <label htmlFor={grade} className="text-sm font-medium leading-none cursor-pointer">
+                                            {grade.charAt(0).toUpperCase() + grade.slice(1).toLowerCase()}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </aside>
 
                     <section className="w-full md:w-3/4">
-                        <div className="flex flex-wrap -m-4">
-                            {jobs.map((job, index) => (
-                                <div key={index} className="p-4 w-full md:w-1/2 lg:w-1/3">
+                        {jobs.length > 0 ? (
+                            <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                                {jobs.map((job, index) => (
                                     <div
-                                        className="bg-[#2a2a3d] p-4 rounded-lg shadow-lg cursor-pointer h-64 overflow-hidden flex flex-col justify-between"
+                                        key={index}
+                                        className="bg-white p-6 shadow-md rounded-md cursor-pointer hover:shadow-lg transition-shadow"
                                         onClick={() => showJobDetails(job)}
                                     >
-                                        <img
-                                            src={job.imgSrc || '/path/to/placeholder-image.png'}
-                                            alt={job.title}
-                                            className="w-full h-32 object-cover rounded-lg mb-2"
-                                        />
-                                        <h3 className="text-xl font-semibold">{job.title}</h3>
-                                        <p className="text-gray-400 overflow-hidden text-ellipsis">{job.description}</p>
+                                        <img src={job.imgSrc} alt={job.title} className="w-full h-40 object-cover mb-4 rounded-md" />
+                                        <h3 className="font-semibold text-lg mb-2">{job.title}</h3>
+                                        <p className="text-gray-600 text-sm line-clamp-3">{job.description}</p>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        ) : (
+                            !loading && <div className="text-center">No jobs found.</div>
+                        )}
                     </section>
                 </div>
-            </main>
 
-            {selectedJob && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-[#2a2a3d] p-8 rounded-lg max-w-4xl mx-4 relative">
-                        <button
-                            className="absolute top-2 right-2 text-gray-400 hover:text-white"
-                            onClick={closeOverlay}
-                        >
-                            <X className="h-6 w-6" />
-                        </button>
-                        <h2 className="text-2xl font-semibold mb-4">{selectedJob.title}</h2>
-                        <p className="text-gray-400 mb-2">Description:</p>
-                        <div className="text-gray-300 mb-4">{formatJobDescription(selectedJob.description)}</div>
-                        <a href={selectedJob.url} className="text-blue-400" target="_blank" rel="noopener noreferrer">Apply Now</a>
+                {selectedJob && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white w-11/12 md:w-1/2 lg:w-1/3 p-8 rounded-lg shadow-lg overflow-y-auto">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-bold">{selectedJob.title}</h2>
+                                <button onClick={closeOverlay} className="text-gray-500 hover:text-gray-700">
+                                    <X />
+                                </button>
+                            </div>
+                            <img src={selectedJob.imgSrc} alt={selectedJob.title} className="w-full h-40 object-cover mb-6 rounded-md" />
+                            {formatJobDescription(selectedJob.description)}
+                            <div className="mt-6">
+                                <a
+                                    href={selectedJob.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full text-center hover:bg-blue-700 transition-all"
+                                >
+                                    Apply Now
+                                    <ChevronRight className="inline ml-2" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
+            </main>
         </div>
     );
 }
