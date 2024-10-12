@@ -32,9 +32,8 @@ export default function Nonprofits() {
 
             <header className="sticky top-0 bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-sm z-50">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold text-blue-600 flex items-center">
-                        <img src="/StuImpact.png?height=40&width=40" alt="StuImpact Logo" className="h-10 w-10 mr-2" />
-                        <span>StuImpact</span>
+                    <Link href="/" className="text-2xl font-bold text-blue-600">
+                        <img src="stuimpactt.png" alt="StuImpact Logo" className="h-10" />
                     </Link>
                     <nav className="hidden md:flex space-x-6">
                         <Link href="/" className="text-sm hover:text-blue-600 transition-colors">Home</Link>
