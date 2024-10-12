@@ -69,7 +69,7 @@ export default function Nonprofits() {
                 </div>
             )}
 
-            <main className="container mx-auto px-4 py-20 relative z-10">
+            <main className="container mx-auto px-4 py-10 relative z-10">
                 <h2 className="text-4xl font-bold mb-8 text-center">Nonprofit Partnership</h2>
                 <p className="text-xl mb-12 text-center max-w-2xl mx-auto">An outline on how partnerships work with StuImpact</p>
 
