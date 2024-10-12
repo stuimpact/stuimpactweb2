@@ -161,7 +161,7 @@ export default function OpportunityFinder() {
             <header className="sticky top-0 bg-white bg-opacity-90 backdrop-filter backdrop-blur-lg shadow-sm z-50">
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <Link href="/" className="text-2xl font-bold text-blue-600">
-                        <img src="/StuImpact.png?height=40&width=120" alt="StuImpact Logo" className="h-10" />
+                        <img src="stuimpactt.png" alt="StuImpact Logo" className="h-10" />
                     </Link>
                     <nav className="hidden md:flex space-x-6">
                         <Link href="/" className="text-sm hover:text-blue-600 transition-colors">Home</Link>
@@ -209,7 +209,10 @@ export default function OpportunityFinder() {
                         <div className={`md:block ${filtersOpen ? 'block' : 'hidden'}`}>
                             <h2 className="text-lg font-semibold mb-4">Refine by Subject</h2>
                             <div className="space-y-2">
-                                {['Arts', 'Business', 'Computer Science', 'Engineering', 'Medicine', 'Government', 'Law/Advocacy'].map((subject) => (
+                                {['BIOLOGY', 'COMPUTER SCIENCE', 'ENVIRONMENTAL SCIENCE', 'ENGINEERING', 'MEDICAL',
+                                    'CHEMISTRY', 'ARTS PERFORMANCE', 'MATHEMATICS', 'ENGLISH LITERATURE WRITING', 'GENERAL',
+                                    'PUBLIC ADMINISTRATION', 'DATA SCIENCE', 'POLITICAL SCIENCE', 'LAW', 'PHYSICS',
+                                    'BUSINESS', 'PSYCHOLOGY', 'KINESIOLOGY', 'PHILOSOPHY'].map((subject) => (
                                     <div key={subject} className="flex items-center">
                                         <input
                                             type="checkbox"
@@ -224,7 +227,8 @@ export default function OpportunityFinder() {
                                                 );
                                             }}
                                         />
-                                        <label htmlFor={subject} className="text-sm font-medium leading-none cursor-pointer">
+                                        <label htmlFor={subject}
+                                               className="text-sm font-medium leading-none cursor-pointer">
                                             {subject}
                                         </label>
                                     </div>
@@ -247,7 +251,8 @@ export default function OpportunityFinder() {
                                                 );
                                             }}
                                         />
-                                        <label htmlFor={grade} className="text-sm font-medium leading-none cursor-pointer">
+                                        <label htmlFor={grade}
+                                               className="text-sm font-medium leading-none cursor-pointer">
                                             {grade.charAt(0).toUpperCase() + grade.slice(1).toLowerCase()}
                                         </label>
                                     </div>
@@ -259,17 +264,38 @@ export default function OpportunityFinder() {
                     <section className="w-full md:w-3/4">
                         {jobs.length > 0 ? (
                             <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                                {jobs.map((job, index) => (
-                                    <div
-                                        key={index}
-                                        className="bg-white p-6 shadow-md rounded-md cursor-pointer hover:shadow-lg transition-shadow"
-                                        onClick={() => showJobDetails(job)}
-                                    >
-                                        <img src={job.imgSrc} alt={job.title} className="w-full h-40 object-cover mb-4 rounded-md" />
-                                        <h3 className="font-semibold text-lg mb-2">{job.title}</h3>
-                                        <p className="text-gray-600 text-sm line-clamp-3">{job.description}</p>
-                                    </div>
-                                ))}
+                                {jobs.map((job, index) => {
+                                    // Extract grade levels and types from the description or tags
+                                    const gradeLevels = job.tags?.filter(tag =>
+                                        ['FRESHMEN', 'SOPHOMORES', 'JUNIORS', 'SENIORS'].includes(tag)
+                                    );
+                                    const types = job.tags?.filter(tag =>
+                                        !['FRESHMEN', 'SOPHOMORES', 'JUNIORS', 'SENIORS'].includes(tag)
+                                    );
+
+                                    // Split description into paragraphs
+                                    const paragraphs = job.description.split(/(?<=\.)\s+/);
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="bg-white p-6 shadow-md rounded-md cursor-pointer hover:shadow-lg transition-shadow"
+                                            onClick={() => showJobDetails(job)}
+                                        >
+                                            <img
+                                                src={job.imgSrc}
+                                                alt={job.title}
+                                                className="w-full h-40 object-cover mb-4 rounded-md"
+                                            />
+                                            <h3 className="font-semibold text-lg mb-2">{job.title}</h3>
+                                            <p className="text-gray-600 text-sm mb-1">
+                                                <strong>Type:</strong> {types?.join(', ')}</p>
+                                            <p className="text-gray-600 text-sm mb-1">
+                                                <strong>Grades:</strong> {gradeLevels?.join(', ')}</p>
+                                            <p className="text-gray-600 text-sm line-clamp-3">{paragraphs[0]}</p>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         ) : (
                             !loading && <div className="text-center">No jobs found.</div>
@@ -279,21 +305,36 @@ export default function OpportunityFinder() {
 
                 {selectedJob && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                        <div className="bg-white w-11/12 md:w-1/2 lg:w-1/3 p-8 rounded-lg shadow-lg overflow-y-auto">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold">{selectedJob.title}</h2>
+                        <div
+                            className="bg-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] p-6 rounded-lg shadow-lg overflow-y-auto">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-2xl font-bold">{selectedJob.title}</h2>
                                 <button onClick={closeOverlay} className="text-gray-500 hover:text-gray-700">
-                                    <X />
+                                    <X/>
                                 </button>
                             </div>
-                            <img src={selectedJob.imgSrc} alt={selectedJob.title} className="w-full h-40 object-cover mb-6 rounded-md" />
-                            {formatJobDescription(selectedJob.description)}
-                            <div className="mt-6">
+                            <img src={selectedJob.imgSrc} alt={selectedJob.title}
+                                 className="w-full h-48 object-cover mb-4 rounded-md"/>
+
+                            {/* Display grade levels and type if available */}
+                            {selectedJob.gradeLevels && (
+                                <p><strong>Grade Levels:</strong> {selectedJob.gradeLevels.join(', ')}</p>
+                            )}
+                            {selectedJob.type && (
+                                <p><strong>Type:</strong> {selectedJob.type}</p>
+                            )}
+
+                            {/* Display formatted job description */}
+                            <div className="my-4">
+                                {formatJobDescription(selectedJob.description)}
+                            </div>
+
+                            <div className="fixed bottom-0 left-0 w-full bg-white p-4 shadow-inner flex justify-center">
                                 <a
                                     href={selectedJob.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-block px-6 py-2 bg-blue-600 text-white rounded-full text-center hover:bg-blue-700 transition-all"
+                                    className="w-full px-6 py-3 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700 transition-all"
                                 >
                                     Apply Now
                                     <ChevronRight className="inline ml-2" />
@@ -302,6 +343,7 @@ export default function OpportunityFinder() {
                         </div>
                     </div>
                 )}
+
             </main>
         </div>
     );
