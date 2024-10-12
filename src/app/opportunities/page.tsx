@@ -214,7 +214,7 @@ export default function OpportunityFinder() {
 			</header>
 
 			<main className="container mx-auto px-4 py-8 relative z-10">
-				<h1 className="text-4xl font-bold mb-8 text-center">
+				<h1 className="text-4xl font-bold mb-8 text-center left-10 relative">
 					Opportunity Finder
 				</h1>
 
