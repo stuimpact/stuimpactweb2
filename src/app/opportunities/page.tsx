@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { X, Search, Menu, ChevronRight } from "lucide-react"; // Import ChevronRight here
+import { X, Search, Menu, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface Job {
@@ -72,11 +72,14 @@ export default function OpportunityFinder() {
 
 			const { opportunities } = response.data;
 			if (opportunities && Array.isArray(opportunities)) {
-				const newJobs = [...jobs, ...opportunities];
-				setJobs(newJobs);
+				const uniqueJobs = new Map(
+					[...jobs, ...opportunities].map((job) => [job._id, job])
+				);
+
+				setJobs(Array.from(uniqueJobs.values()));
 				setHasMore(opportunities.length > 0);
 				setCurrentPage(page);
-				localStorage.setItem("jobs", JSON.stringify(newJobs));
+				localStorage.setItem("jobs", JSON.stringify(Array.from(uniqueJobs.values())));
 			} else {
 				console.error(
 					"Expected an array of opportunities but got:",
@@ -114,11 +117,13 @@ export default function OpportunityFinder() {
 	}, [jobs]);
 
 	const handleScroll = useCallback(() => {
-		const bottom =
-			window.innerHeight + document.documentElement.scrollTop ===
-			document.documentElement.offsetHeight;
-		if (bottom && hasMore && !loading) {
-			fetchJobs(currentPage + 1);
+		if (
+			window.innerHeight + document.documentElement.scrollTop >=
+			document.documentElement.offsetHeight - 2
+		) {
+			if (hasMore && !loading) {
+				fetchJobs(currentPage + 1);
+			}
 		}
 	}, [currentPage, hasMore, loading]);
 
@@ -384,7 +389,7 @@ export default function OpportunityFinder() {
 											onClick={() => showJobDetails(job)}
 										>
 											<img
-												src={job.imgSrc}
+												src="interests.jpg"
 												alt={job.title}
 												className="w-full h-40 object-cover mb-4 rounded-md"
 											/>
@@ -418,29 +423,27 @@ export default function OpportunityFinder() {
 
 				{selectedJob && (
 					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-						<div className="bg-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] p-6 rounded-lg shadow-lg overflow-y-auto">
+						<div
+							className="bg-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] p-6 rounded-lg shadow-lg overflow-y-auto">
 							<div className="flex justify-between items-center mb-4">
-								<h2 className="text-2xl font-bold">
-									{selectedJob.title}
-								</h2>
+								<h2 className="text-2xl font-bold">{selectedJob.title}</h2>
 								<button
 									onClick={closeOverlay}
 									className="text-gray-500 hover:text-gray-700"
 								>
-									<X />
+									<X/>
 								</button>
 							</div>
 							<img
-								src={selectedJob.imgSrc}
+								src="background.jpg"
 								alt={selectedJob.title}
 								className="w-full h-48 object-cover mb-4 rounded-md"
 							/>
 
-							{/* Display grade levels and type if available */}
+							{/* Display grade levels, type, and prestige if available */}
 							{selectedJob.gradeLevels && (
 								<p>
-									<strong>Grade Levels:</strong>{" "}
-									{selectedJob.gradeLevels.join(", ")}
+									<strong>Grade Levels:</strong> {selectedJob.gradeLevels.join(", ")}
 								</p>
 							)}
 							{selectedJob.type && (
@@ -448,13 +451,21 @@ export default function OpportunityFinder() {
 									<strong>Type:</strong> {selectedJob.type}
 								</p>
 							)}
+							{selectedJob.prestige && (
+								<p>
+									<strong>Prestige:</strong> {selectedJob.prestige}
+								</p>
+							)}
 
 							{/* Display formatted job description */}
 							<div className="my-4">
-								{formatJobDescription(selectedJob.description)}
+								{selectedJob.description.split(/(?<=\.)\s+/).map((para, i) => (
+									<p key={i} className="mb-2">{para}</p>
+								))}
 							</div>
 
-							<div className="fixed bottom-0 left-0 w-full bg-white p-4 shadow-inner flex justify-center">
+							{/* Apply Now Button inside the modal */}
+							<div className="w-full p-4 flex justify-center">
 								<a
 									href={selectedJob.url}
 									target="_blank"
@@ -462,7 +473,7 @@ export default function OpportunityFinder() {
 									className="w-full px-6 py-3 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700 transition-all"
 								>
 									Apply Now
-									<ChevronRight className="inline ml-2" />
+									<ChevronRight className="inline ml-2"/>
 								</a>
 							</div>
 						</div>

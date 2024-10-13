@@ -14,7 +14,6 @@ import {
 	Award,
 	Handshake,
 } from "lucide-react";
-
 const Button = ({ children, className, ...props }) => (
 	<button
 		className={`px-6 py-3 rounded-full font-medium text-sm transition-all ${className}`}
@@ -30,6 +29,8 @@ const Input = ({ className, ...props }) => (
 		{...props}
 	/>
 );
+
+
 
 export default function Component() {
 	const [email, setEmail] = useState("");
@@ -374,48 +375,19 @@ export default function Component() {
 					id="contact"
 					className="py-20 bg-gradient-to-br from-yellow-50 to-red-50"
 				>
-					<div className="container mx-auto px-4 text-center">
-						<h2 className="text-4xl font-bold mb-8">
-							Stay Connected
-						</h2>
-						<p className="mb-8 max-w-2xl mx-auto">
-							Join our newsletter for the latest opportunities and
-							updates!
-						</p>
-						<form
-							onSubmit={(e) => {
-								e.preventDefault();
-								console.log("Submitted:", email);
-							}}
-							className="flex max-w-md mx-auto"
-						>
-							<Input
-								type="email"
-								placeholder="Enter your email"
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								className="flex-grow mr-2"
-								required
-							/>
-							<Button
-								type="submit"
-								className="bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg"
-							>
-								Subscribe
-							</Button>
-						</form>
-					</div>
+
 				</section>
 			</main>
 
 			<footer className="bg-gray-100 py-10">
 				<div className="container mx-auto px-4 text-center">
-					<div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 mb-8">
+					<div
+						className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 mb-8">
 						<a
 							href="mailto:stuimpactofficial@gmail.com"
 							className="flex items-center text-gray-600 hover:text-blue-600 transition-colors"
 						>
-							<Mail className="w-5 h-5 mr-2" />
+							<Mail className="w-5 h-5 mr-2"/>
 							stuimpactofficial@gmail.com
 						</a>
 						<a
