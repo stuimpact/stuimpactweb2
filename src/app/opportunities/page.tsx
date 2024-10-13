@@ -6,6 +6,7 @@ import { X, Search, Menu } from "lucide-react";
 import Link from "next/link";
 
 interface Job {
+    _id: string; // Include _id to uniquely identify jobs
     title: string;
     description: string;
     url: string;
@@ -15,7 +16,6 @@ interface Job {
     gradeLevels?: string[];
     tags?: string[];
 }
-
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -262,231 +262,101 @@ export default function OpportunityFinder() {
 							</Button>
 						</div>
 						<div
-							className={`md:block ${
-								filtersOpen ? "block" : "hidden"
-							}`}
+							className={`md:block ${filtersOpen ? "block" : "hidden"} bg-gray-200 p-4 rounded-lg`}
 						>
-							<h2 className="text-lg font-semibold mb-4">
-								Refine by Subject
-							</h2>
-							<div className="space-y-2">
-								{[
-									"BIOLOGY",
-									"COMPUTER SCIENCE",
-									"ENVIRONMENTAL SCIENCE",
-									"ENGINEERING",
-									"MEDICAL",
-									"CHEMISTRY",
-									"ARTS PERFORMANCE",
-									"MATHEMATICS",
-									"ENGLISH LITERATURE WRITING",
-									"GENERAL",
-									"PUBLIC ADMINISTRATION",
-									"DATA SCIENCE",
-									"POLITICAL SCIENCE",
-									"LAW",
-									"PHYSICS",
-									"BUSINESS",
-									"PSYCHOLOGY",
-									"KINESIOLOGY",
-									"PHILOSOPHY",
-								].map((subject) => (
-									<div
-										key={subject}
-										className="flex items-center"
-									>
-										<input
-											type="checkbox"
-											id={subject}
-											className="mr-2"
-											checked={selectedSubjects.includes(
-												subject
-											)}
-											onChange={() => {
-												setSelectedSubjects((prev) =>
-													prev.includes(subject)
-														? prev.filter(
-																(s) =>
-																	s !==
-																	subject
-														  )
-														: [...prev, subject]
-												);
-											}}
-										/>
-										<label
-											htmlFor={subject}
-											className="text-sm font-medium leading-none cursor-pointer"
-										>
-											{subject}
-										</label>
-									</div>
-								))}
-							</div>
-							<h2 className="text-lg font-semibold mt-8 mb-4">
-								Grade Level
-							</h2>
-							<div className="space-y-2">
-								{[
-									"FRESHMEN",
-									"SOPHOMORES",
-									"JUNIORS",
-									"SENIORS",
-								].map((grade) => (
-									<div
-										key={grade}
-										className="flex items-center"
-									>
-										<input
-											type="checkbox"
-											id={grade}
-											className="mr-2"
-											checked={selectedGrades.includes(
-												grade
-											)}
-											onChange={() => {
-												setSelectedGrades((prev) =>
-													prev.includes(grade)
-														? prev.filter(
-																(g) =>
-																	g !== grade
-														  )
-														: [...prev, grade]
-												);
-											}}
-										/>
-										<label
-											htmlFor={grade}
-											className="text-sm font-medium leading-none cursor-pointer"
-										>
-											{grade.charAt(0).toUpperCase() +
-												grade.slice(1).toLowerCase()}
-										</label>
-									</div>
-								))}
-							</div>
+							<h2 className="text-lg font-semibold mb-4">Filters</h2>
+							<label className="block mb-2">
+								Subjects:
+								<select
+									multiple
+									className="mt-2 w-full border border-gray-300 rounded p-2"
+									value={selectedSubjects}
+									onChange={(e) =>
+										setSelectedSubjects(
+											Array.from(e.target.selectedOptions, (option) => option.value)
+										)
+									}
+								>
+									<option value="STEM">STEM</option>
+									<option value="ARTS">Arts</option>
+									<option value="HUMANITIES">Humanities</option>
+								</select>
+							</label>
+							<label className="block mb-2">
+								Grades:
+								<select
+									multiple
+									className="mt-2 w-full border border-gray-300 rounded p-2"
+									value={selectedGrades}
+									onChange={(e) =>
+										setSelectedGrades(
+											Array.from(e.target.selectedOptions, (option) => option.value)
+										)
+									}
+								>
+									<option value="FRESHMEN">Freshmen</option>
+									<option value="SOPHOMORES">Sophomores</option>
+									<option value="JUNIORS">Juniors</option>
+									<option value="SENIORS">Seniors</option>
+								</select>
+							</label>
 						</div>
 					</aside>
 
 					<section className="w-full md:w-3/4">
 						{jobs.length > 0 ? (
-							<div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-								{jobs.map((job, index) => {
-									// Extract grade levels and types from the description or tags
-									const gradeLevels = job.tags?.filter(
-        (tag) =>
-            [
-                "FRESHMEN",
-                "SOPHOMORES",
-                "JUNIORS",
-                "SENIORS",
-            ].includes(tag)
-    ) || [];
-									const types = job.tags?.filter(
-										(tag) =>
-											![
-												"FRESHMEN",
-												"SOPHOMORES",
-												"JUNIORS",
-												"SENIORS",
-											].includes(tag)
-									);
-
-									// Split description into paragraphs
-									const paragraphs =
-										job.description.split(/(?<=\.)\s+/);
-
-									return (
-										<div
-											key={index}
-											className="bg-white p-6 shadow-md rounded-md cursor-pointer hover:shadow-lg transition-shadow"
-											onClick={() => showJobDetails(job)}
-										>
-											<img
-												src="interests.jpg"
-												alt={job.title}
-												className="w-full h-40 object-cover mb-4 rounded-md"
-											/>
-											<h3 className="font-semibold text-lg mb-2">
-												{job.title}
-											</h3>
-											<p className="text-gray-600 text-sm mb-1">
-												<strong>Type:</strong>{" "}
-												{types?.join(", ")}
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+								{jobs.map((job) => (
+									<div
+										key={job._id}
+										className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 transition-transform hover:scale-105 cursor-pointer"
+										onClick={() => showJobDetails(job)}
+									>
+										<img
+											src={job.image}
+											alt={job.title}
+											className="w-full h-32 object-cover"
+										/>
+										<div className="p-4">
+											<h3 className="text-xl font-semibold">{job.title}</h3>
+											<p className="text-gray-600 text-sm">
+												{job.prestige} | {job.type}
 											</p>
-											<p className="text-gray-600 text-sm mb-1">
-												<strong>Grades:</strong>{" "}
-												{gradeLevels?.join(", ")}
-											</p>
-											<p className="text-gray-600 text-sm line-clamp-3">
-												{paragraphs[0]}
+											<p className="text-gray-800 mt-2">
+												{formatJobDescription(job.description)}
 											</p>
 										</div>
-									);
-								})}
+									</div>
+								))}
 							</div>
 						) : (
-							!loading && (
-								<div className="text-center">
-									No jobs found.
-								</div>
-							)
+							<div className="text-center">No jobs found.</div>
 						)}
+
+						{loading && <div className="text-center">Loading more jobs...</div>}
 					</section>
 				</div>
 
 				{selectedJob && (
-					<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-						<div
-							className="bg-white w-11/12 md:w-3/4 lg:w-2/3 max-h-[80vh] p-6 rounded-lg shadow-lg overflow-y-auto">
-							<div className="flex justify-between items-center mb-4">
-								<h2 className="text-2xl font-bold">{selectedJob.title}</h2>
-								<button
-									onClick={closeOverlay}
-									className="text-gray-500 hover:text-gray-700"
-								>
-									<X/>
-								</button>
-							</div>
-							<img
-								src="background.jpg"
-								alt={selectedJob.title}
-								className="w-full h-48 object-cover mb-4 rounded-md"
-							/>
-{selectedJob.gradeLevels && selectedJob.gradeLevels.length > 0 && (
-    <p>
-        <strong>Grade Levels:</strong> {selectedJob.gradeLevels.join(", ")}
-    </p>
-)}
-
-							{selectedJob.type && (
-								<p>
-									<strong>Type:</strong> {selectedJob.type}
+					<div
+						className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+						onClick={closeOverlay}
+					>
+						<div className="bg-white rounded-lg overflow-hidden w-11/12 md:w-1/2">
+							<div className="p-4 border-b">
+								<h2 className="text-2xl font-semibold">{selectedJob.title}</h2>
+								<p className="text-gray-600 text-sm">
+									{selectedJob.prestige} | {selectedJob.type}
 								</p>
-							)}
-							{selectedJob.prestige && (
-								<p>
-									<strong>Prestige:</strong> {selectedJob.prestige}
-								</p>
-							)}
-
-							{/* Display formatted job description */}
-							<div className="my-4">
-								{selectedJob.description.split(/(?<=\.)\s+/).map((para, i) => (
-									<p key={i} className="mb-2">{para}</p>
-								))}
 							</div>
-
-							{/* Apply Now Button inside the modal */}
-							<div className="w-full p-4 flex justify-center">
-								<a
-									href={selectedJob.url}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="w-full px-6 py-3 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700 transition-all"
-								>
+							<div className="p-4">{formatJobDescription(selectedJob.description)}</div>
+							<div className="flex justify-end p-4 border-t">
+								<Button className="bg-blue-600 text-white" onClick={() => window.open(selectedJob.url, "_blank")}>
 									Apply Now
-								</a>
+								</Button>
+								<Button className="ml-2" onClick={closeOverlay}>
+									<X />
+								</Button>
 							</div>
 						</div>
 					</div>
