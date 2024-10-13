@@ -14,6 +14,7 @@ import {
 	Award,
 	Handshake,
 } from "lucide-react";
+
 const Button = ({ children, className, ...props }) => (
 	<button
 		className={`px-6 py-3 rounded-full font-medium text-sm transition-all ${className}`}
@@ -30,6 +31,12 @@ const Input = ({ className, ...props }) => (
 	/>
 );
 
+const TextArea = ({ className, ...props }) => (
+	<textarea
+		className={`px-4 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+		{...props}
+	/>
+);
 
 
 export default function Component() {
