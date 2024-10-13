@@ -6,12 +6,15 @@ import { X, Search, Menu } from "lucide-react";
 import Link from "next/link";
 
 interface Job {
-  _id: string;
-  title: string;
-  description: string;
-  url: string;
-  tags?: string[]; // Add this line to include the 'tags' property
+    title: string;
+    description: string;
+    url: string;
+    image: string;
+    type?: string;
+    prestige?: string;
+    gradeLevels?: string[]; 
 }
+
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -449,13 +452,12 @@ export default function OpportunityFinder() {
 								alt={selectedJob.title}
 								className="w-full h-48 object-cover mb-4 rounded-md"
 							/>
+{selectedJob.gradeLevels && selectedJob.gradeLevels.length > 0 && (
+    <p>
+        <strong>Grade Levels:</strong> {selectedJob.gradeLevels.join(", ")}
+    </p>
+)}
 
-							{/* Display grade levels, type, and prestige if available */}
-							{selectedJob.gradeLevels && (
-								<p>
-									<strong>Grade Levels:</strong> {selectedJob.gradeLevels.join(", ")}
-								</p>
-							)}
 							{selectedJob.type && (
 								<p>
 									<strong>Type:</strong> {selectedJob.type}
