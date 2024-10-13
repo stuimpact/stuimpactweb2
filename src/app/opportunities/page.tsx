@@ -2,30 +2,39 @@
 
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { X, Search, Menu, ChevronRight } from "lucide-react";
+import { X, Search, Menu } from "lucide-react";
 import Link from "next/link";
 
 interface Job {
-	_id: string;
-	title: string;
-	description: string;
-	url: string;
+  _id: string;
+  title: string;
+  description: string;
+  url: string;
 }
 
-const Button = ({ children, className, ...props }) => (
-	<button
-		className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
-		{...props}
-	>
-		{children}
-	</button>
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Button: React.FC<ButtonProps> = ({ children, className = "", ...props }) => (
+  <button
+    className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
+    {...props}
+  >
+    {children}
+  </button>
 );
 
-const Input = ({ className, ...props }) => (
-	<input
-		className={`px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-		{...props}
-	/>
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+}
+
+const Input: React.FC<InputProps> = ({ className = "", ...props }) => (
+  <input
+    className={`px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+    {...props}
+  />
 );
 
 export default function OpportunityFinder() {
