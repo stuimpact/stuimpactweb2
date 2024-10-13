@@ -12,7 +12,6 @@ export async function POST(req: Request) {
         const body = await req.json();
         let { interest, grade, page = 1 } = body; // Default to page 1 if not provided
 
-        // Validate interest and grade presence
         if (!interest || !grade) {
             return NextResponse.json({ error: 'Interest and grade are required.' }, { status: 400 });
         }
@@ -24,12 +23,7 @@ export async function POST(req: Request) {
             '11': 'JUNIORS',
             '12': 'SENIORS',
         };
-        // Check if grade is a number and convert it to uppercase if needed
-        if (gradeMap[grade]) {
-            grade = gradeMap[grade];
-        } else {
-            grade = grade.toUpperCase(); // If grade is already in uppercase word form
-        }
+        grade = gradeMap[grade] || grade.toUpperCase();
 
         // Supported interests (uppercase as required in the tags)
         const interests = [
@@ -51,7 +45,10 @@ export async function POST(req: Request) {
 
         // Build the query based on interest and grade
         const query = {
-            tags: { $all: [interest.toUpperCase(), grade.toUpperCase()] } // Ensure both interest and grade are present in tags
+            $and: [
+                { tags: interest.toUpperCase() },
+                { tags: grade.toUpperCase() }
+            ]
         };
 
         // Fetch the matching documents (pagination applied)
