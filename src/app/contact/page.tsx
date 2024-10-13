@@ -5,40 +5,43 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-	children: React.ReactNode;
-	className?: string;
+    children: React.ReactNode;
+    className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({ children, className, ...props }) => (
-	<button
-		className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
-		{...props}
-	>
-		{children}
-	</button>
+    <button
+        className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
+        {...props}
+    >
+        {children}
+    </button>
 );
 
+// Input Component
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-	className?: string;
+    className?: string;
 }
 
 const Input: React.FC<InputProps> = ({ className, ...props }) => (
-	<input
-		className={`w-full px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-		{...props}
-	/>
+    <input
+        className={`w-full px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...props}
+    />
 );
 
+// Textarea Component
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-	className?: string;
+    className?: string;
 }
 
 const Textarea: React.FC<TextareaProps> = ({ className, ...props }) => (
-	<textarea
-		className={`w-full px-4 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-		{...props}
-	/>
+    <textarea
+        className={`w-full px-4 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        {...props}
+    />
 );
+
 
 export default function ContactPage() {
 	const [name, setName] = useState<string>("");
