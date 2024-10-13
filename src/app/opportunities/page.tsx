@@ -12,7 +12,8 @@ interface Job {
     image: string;
     type?: string;
     prestige?: string;
-    gradeLevels?: string[]; 
+    gradeLevels?: string[];
+    tags?: string[];
 }
 
 
@@ -373,14 +374,14 @@ export default function OpportunityFinder() {
 								{jobs.map((job, index) => {
 									// Extract grade levels and types from the description or tags
 									const gradeLevels = job.tags?.filter(
-										(tag) =>
-											[
-												"FRESHMEN",
-												"SOPHOMORES",
-												"JUNIORS",
-												"SENIORS",
-											].includes(tag)
-									);
+        (tag) =>
+            [
+                "FRESHMEN",
+                "SOPHOMORES",
+                "JUNIORS",
+                "SENIORS",
+            ].includes(tag)
+    ) || [];
 									const types = job.tags?.filter(
 										(tag) =>
 											![
