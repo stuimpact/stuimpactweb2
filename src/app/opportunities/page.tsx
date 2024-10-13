@@ -10,6 +10,7 @@ interface Job {
   title: string;
   description: string;
   url: string;
+  tags?: string[]; // Add this line to include the 'tags' property
 }
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
