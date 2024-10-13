@@ -11,6 +11,7 @@ interface Job {
 	description: string;
 	url: string;
 	tags: string[]; // Add this line
+	gradeLevels?: string[]; // Add this line to include gradeLevels
 }
 
 
