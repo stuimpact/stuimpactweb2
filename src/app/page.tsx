@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 import Link from "next/link";
 import {
 	Menu,
@@ -15,7 +15,14 @@ import {
 	Handshake,
 } from "lucide-react";
 
-const Button = ({ children, className, ...props }) => (
+// Define types for Button props
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	children: ReactNode;
+	className?: string;
+}
+
+// Button component
+const Button = ({ children, className, ...props }: ButtonProps) => (
 	<button
 		className={`px-6 py-3 rounded-full font-medium text-sm transition-all ${className}`}
 		{...props}
@@ -24,20 +31,31 @@ const Button = ({ children, className, ...props }) => (
 	</button>
 );
 
-const Input = ({ className, ...props }) => (
+// Define types for Input props
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+	className?: string;
+}
+
+// Input component
+const Input = ({ className, ...props }: InputProps) => (
 	<input
 		className={`px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
 		{...props}
 	/>
 );
 
-const TextArea = ({ className, ...props }) => (
+// Define types for TextArea props
+interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+	className?: string;
+}
+
+// TextArea component
+const TextArea = ({ className, ...props }: TextAreaProps) => (
 	<textarea
 		className={`px-4 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
 		{...props}
 	/>
 );
-
 
 export default function Component() {
 	const [email, setEmail] = useState("");
