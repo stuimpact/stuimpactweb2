@@ -10,9 +10,9 @@ export async function POST(req: Request) {
 
     try {
         const body = await req.json();
-        let { interest, grade, page = 1 } = body; // Default to page 1 if not provided
+        const { interest, grade: inputGrade, page = 1 } = body; // Default to page 1 if not provided
 
-        if (!interest || !grade) {
+        if (!interest || !inputGrade) {
             return NextResponse.json({ error: 'Interest and grade are required.' }, { status: 400 });
         }
 
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
             '11': 'JUNIORS',
             '12': 'SENIORS',
         };
-        grade = gradeMap[grade] || grade.toUpperCase();
+        const grade = gradeMap[inputGrade] || inputGrade.toUpperCase();
 
         // Supported interests (uppercase as required in the tags)
         const interests = [
