@@ -1,10 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, ReactNode } from 'react' // Import ReactNode for typing
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
-const Button = ({ children, className, ...props }) => (
+// Define the props interface for the Button component
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+    children: ReactNode; // Specify the type of children
+    className?: string; // Optional className prop
+}
+
+const Button = ({ children, className = '', ...props }: ButtonProps) => (
     <button
         className={`px-4 py-2 rounded-full font-medium text-sm transition-all ${className}`}
         {...props}
@@ -12,7 +18,6 @@ const Button = ({ children, className, ...props }) => (
         {children}
     </button>
 )
-
 export default function Nonprofits() {
     const [menuOpen, setMenuOpen] = useState(false);
 
