@@ -10,7 +10,9 @@ interface Job {
 	title: string;
 	description: string;
 	url: string;
+	tags: string[]; // Add this line
 }
+
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
