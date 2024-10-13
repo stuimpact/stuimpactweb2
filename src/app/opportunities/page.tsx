@@ -106,9 +106,24 @@ export default function OpportunityFinder() {
 							{[
 								"BIOLOGY",
 								"COMPUTER SCIENCE",
+								"ENVIRONMENTAL SCIENCE",
 								"ENGINEERING",
+								"MEDICAL",
+								"CHEMISTRY",
 								"ARTS PERFORMANCE",
 								"MATHEMATICS",
+								"ENGLISH LITERATURE WRITING",
+								"GENERAL",
+								"PUBLIC ADMINISTRATION",
+								"DATA SCIENCE",
+								"POLITICAL SCIENCE",
+								"LAW",
+								"PHYSICS",
+								"BUSINESS",
+								"PSYCHOLOGY",
+								"KINESIOLOGY",
+								"PHILOSOPHY"
+
 							].map((subject) => (
 								<option key={subject} value={subject}>
 									{subject}
