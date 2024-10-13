@@ -486,7 +486,6 @@ export default function OpportunityFinder() {
 									className="w-full px-6 py-3 bg-blue-600 text-white text-center rounded-md hover:bg-blue-700 transition-all"
 								>
 									Apply Now
-									<ChevronRight className="inline ml-2"/>
 								</a>
 							</div>
 						</div>
