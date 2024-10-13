@@ -21,15 +21,9 @@ const Button = ({ children, className, ...props }) => (
 	</button>
 );
 
-const Input = ({ className, ...props }) => (
-	<input
-		className={`px-4 py-2 rounded-full border text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-		{...props}
-	/>
-);
+// Removed the unused Input component
 
 export default function OpportunityFinder() {
-	const [location, setLocation] = useState<string>("Washington");
 	const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]);
 	const [selectedGrades, setSelectedGrades] = useState<string[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
@@ -45,7 +39,6 @@ export default function OpportunityFinder() {
 		const currentSearchParams = JSON.stringify({
 			interest: selectedSubjects.join(" "),
 			grade: selectedGrades.join(","),
-			location,
 		});
 
 		if (prevSearchParams !== currentSearchParams) {
@@ -66,7 +59,6 @@ export default function OpportunityFinder() {
 			const response = await axios.post("/api/searchjobs", {
 				interest: selectedSubjects.join(" "),
 				grade: selectedGrades.join(","),
-				location: location,
 				page: page,
 			});
 
