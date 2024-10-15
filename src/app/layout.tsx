@@ -12,9 +12,8 @@ export const metadata: Metadata = {
     openGraph: {
         title: 'StuImpact - Discover Opportunities for Students',
         description: 'Explore internships, jobs, and volunteer opportunities tailored for students. Find your next step with StuImpact.',
-        url: 'https://www.stuimpact.com',
-        type: 'website'
-        ],
+        url: 'https://www.stuimpact.works',
+        type: 'website',
         site_name: 'StuImpact',
     }
 };
@@ -26,11 +25,11 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-        <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <link rel="canonical" href="https://www.stuimpact.works" />
-        </head>
-        <body className={inter.className}>{children}</body>
+            <head>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <link rel="canonical" href="https://www.stuimpact.works" />
+            </head>
+            <body className={inter.className}>{children}</body>
         </html>
     );
 }
