@@ -14,7 +14,7 @@ export const metadata: Metadata = {
         description: 'Explore internships, jobs, and volunteer opportunities tailored for students. Find your next step with StuImpact.',
         url: 'https://www.stuimpact.works',
         type: 'website',
-        site_name: 'StuImpact',
+        siteName: 'StuImpact',
     }
 };
 
