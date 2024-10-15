@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     title: 'StuImpact - Discover Opportunities for Students',
     description: 'Find internships, volunteer work, and job opportunities tailored for high school and college students. Explore the best opportunities to build your future with StuImpact.',
     keywords: 'student opportunities, internships, volunteer work, job opportunities, high school, college, career growth, student jobs, internships in Washington, StuImpact',
-    author: 'StuImpact',
+    authors: [{ name: 'StuImpact' }],
     openGraph: {
         title: 'StuImpact - Discover Opportunities for Students',
         description: 'Explore internships, jobs, and volunteer opportunities tailored for students. Find your next step with StuImpact.',
