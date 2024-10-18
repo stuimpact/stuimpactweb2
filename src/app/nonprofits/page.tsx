@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X } from 'lucide-react'
@@ -37,10 +37,10 @@ export default function Nonprofits() {
     setScrolled(window.scrollY > 50)
   }
 
-  useState(() => {
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  useEffect(() => {
+  window.addEventListener('scroll', handleScroll)
+  return () => window.removeEventListener('scroll', handleScroll)
+}, [])
 
   return (
     <div className="min-h-screen bg-white text-gray-800 overflow-x-hidden">
