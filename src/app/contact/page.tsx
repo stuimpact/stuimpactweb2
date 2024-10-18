@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { useState, ReactNode, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Menu, X, Send } from 'lucide-react'
@@ -54,18 +54,16 @@ export default function ContactPage() {
 	const [email, setEmail] = useState<string>('')
 	const [message, setMessage] = useState<string>('')
 	const [menuOpen, setMenuOpen] = useState(false)
-	const [scrolled, setScrolled] = useState(false)
+	const [scrolled, setScrolled] = useState(false);
 
-	const toggleMenu = () => setMenuOpen(!menuOpen)
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 50);
+  };
 
-	const handleScroll = () => {
-		setScrolled(window.scrollY > 50)
-	}
-
-	useState(() => {
-		window.addEventListener('scroll', handleScroll)
-		return () => window.removeEventListener('scroll', handleScroll)
-	}, [])
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
