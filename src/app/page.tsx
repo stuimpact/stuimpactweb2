@@ -211,9 +211,9 @@ export default function Component() {
 				<GlowingOrb className="w-48 h-48 bottom-0 left-0" />
 				<div className="container mx-auto px-4 text-center relative z-10">
 					<div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 mb-8">
-						<a href="mailto:mrithunjay@stuimpact.works" className="flex items-center text-gray-600 hover:text-purple-600 transition-colors">
+						<a href="mailto:inquiries@stuimpact.works" className="flex items-center text-gray-600 hover:text-purple-600 transition-colors">
 							<Mail className="w-5 h-5 mr-2" />
-							mrithunjay@stuimpact.works
+							inquiries@stuimpact.works
 						</a>
 						<a href="tel:+14253942112" className="flex items-center text-gray-600 hover:text-purple-600 transition-colors">
 							<Phone className="w-5 h-5 mr-2" />
