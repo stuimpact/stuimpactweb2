@@ -60,6 +60,8 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1FC4DF6E19C64C6B9E30707C3A4F023F }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1A04A947C7F641D2B7539344135D2348 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_66E7485EB4A84030A66F7E0300435802 }}
+      - name: Delay to avoid SCM conflict
+        run: sleep 15
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
