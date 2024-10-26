@@ -63,11 +63,13 @@ jobs:
       - name: Delay to avoid SCM conflict
         run: sleep 15
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
+     - name: 'Deploy using Run From Package'
+       id: deploy-to-webapp
+       uses: azure/webapps-deploy@v3
+       with:
           app-name: 'stuimpact'
           slot-name: 'Production'
-          package: .
+          package: ${{ github.workspace }}/release.zip
+       enable-ondemand: true
+
           
