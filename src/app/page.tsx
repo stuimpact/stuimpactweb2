@@ -206,7 +206,6 @@ export default function Component() {
 					</div>
 				</section>
 			</main>
-			// MongoDB connection details (hardcoded for testing)
 
 
 			<footer className="bg-white py-10 relative overflow-hidden">
